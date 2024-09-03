@@ -27,6 +27,7 @@ export class UsersController {
     const userId = id;
     return this.usersService.getUser(userId);
   }
+
   @Post()
   async createUser(@Body() inputModel: CreateUserInputModelType) {
     const createUser = await this.usersService.createUser(inputModel);
