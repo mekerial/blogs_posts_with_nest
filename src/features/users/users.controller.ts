@@ -7,13 +7,15 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { QueryUserInputModel } from '../common/types';
+import { QueryUserInputModel } from '../../common/types';
 import { CreateUserInputModelType } from './types/user.types';
+import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
 
+@UseFilters(HttpExceptionFilter)
 @Controller('users')
 export class UsersController {
   constructor(protected usersService: UsersService) {}
@@ -32,17 +34,6 @@ export class UsersController {
   async createUser(@Body() inputModel: CreateUserInputModelType) {
     const createUser = await this.usersService.createUser(inputModel);
     return createUser;
-  }
-
-  @Put(':id')
-  async updateUser(
-    @Param('id') userId: string,
-    @Body() model: CreateUserInputModelType,
-  ) {
-    return {
-      id: userId,
-      model: model,
-    };
   }
 
   @Delete(':id')

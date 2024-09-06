@@ -9,11 +9,14 @@ import {
   Post,
   Put,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { QueryPostInputModel } from '../common/types';
+import { QueryPostInputModel } from '../../common/types';
 import { CreatePostModel, UpdatePostModel } from './types/post.types';
+import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
 
+@UseFilters(HttpExceptionFilter)
 @Controller('posts')
 export class PostsController {
   constructor(protected postService: PostsService) {}

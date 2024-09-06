@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, SortOrder } from 'mongoose';
-import { QueryUserInputModel } from '../common/types';
+import { QueryUserInputModel } from '../../common/types';
 import { UserDbModel } from './types/user.types';
 import { transformUserToViewModel } from './types/mappers';
 import { UserDocument } from './schemas/user.schema';
@@ -89,5 +89,33 @@ export class UsersRepository {
     const objectId = new mongoose.Types.ObjectId(userId);
     const deleteUser = await this.userModel.deleteOne({ _id: objectId }).exec();
     return !!deleteUser.deletedCount;
+  }
+
+  async findUserByLoginOrEmail(loginOrEmail: string) {
+    const user = await this.userModel
+      .find({
+        $or: [
+          { 'accountData.email': loginOrEmail },
+          { 'accountData.login': loginOrEmail },
+        ],
+      })
+      .lean();
+    if (!user[0]) {
+      return null;
+    }
+    return user[0];
+  }
+
+  async nameIsExist(value: string) {
+    const user = await this.userModel
+      .find({ 'accountData.login': value })
+      .lean()
+      .exec();
+
+    if (user.length === 0) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -1,8 +1,18 @@
-export type CreateBlogModel = {
+import { IsString, Length } from 'class-validator';
+
+export class CreateBlogModel {
+  @IsString()
+  @Length(1, 15, { message: 'Length name is incorrect!' })
   name: string;
+
+  @IsString()
+  @Length(1, 100, { message: 'Length description is incorrect!' })
   description: string;
+
+  @IsString()
+  @Length(1, 100, { message: 'Length websiteUrl is incorrect!' })
   websiteUrl: string;
-};
+}
 
 export type CreatePostBlogModel = {
   title: string;

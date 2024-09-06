@@ -1,9 +1,20 @@
-export type CreatePostModel = {
+import { IsString, Length } from 'class-validator';
+
+export class CreatePostModel {
+  @IsString()
+  @Length(0, 30, { message: 'Length title is incorrect' })
   title: string;
+
+  @IsString()
+  @Length(0, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription: string;
+
+  @IsString()
+  @Length(0, 1000, { message: 'Length content is incorrect' })
   content: string;
+
   blogId: string;
-};
+}
 
 export type CreatePostModelByBlog = {
   title: string;

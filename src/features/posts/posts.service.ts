@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
-import { QueryPostInputModel } from '../common/types';
+import { QueryPostInputModel } from '../../common/types';
 import { CreatePostModel, UpdatePostModel } from './types/post.types';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { transformPostToViewModel } from './types/mappers';
