@@ -7,9 +7,15 @@ import { UsersRepository } from './users.repository';
 import { PasswordService } from '../../applications/password.service';
 import { JwtService } from '../../applications/jwt.service';
 import { NameIsExistConstraint } from '../../infrastructure/decorators/validate/name-is-exist.decorator';
+import { PasswordRecoverySchema } from './schemas/passwords-recovery.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
+    ]),
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,

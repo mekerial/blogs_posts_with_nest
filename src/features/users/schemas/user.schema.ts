@@ -19,19 +19,17 @@ class AccountData {
   @Prop({ default: new Date().toISOString() })
   createdAt: string;
 }
-
 @Schema()
 class EmailConfirmation {
   @Prop()
   confirmationCode: string;
 
   @Prop()
-  expirationDate: string;
+  expirationDate: Date;
 
   @Prop({ default: false })
   isConfirmed: boolean;
 }
-
 @Schema()
 export class User {
   @Prop({ type: AccountData, required: true })

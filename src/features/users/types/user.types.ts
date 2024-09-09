@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator';
 import { Trim } from '../../../infrastructure/decorators/transform/trim';
-import { isOptionalEmail } from '../../../infrastructure/decorators/validate/is-optional-email';
+import { IsOptionalEmail } from '../../../infrastructure/decorators/validate/is-optional-email';
 import { NameIsExist } from '../../../infrastructure/decorators/validate/name-is-exist.decorator';
 
 export class CreateUserInputModelType {
@@ -12,12 +12,35 @@ export class CreateUserInputModelType {
 
   @Trim()
   @IsString()
-  @isOptionalEmail()
+  @IsOptionalEmail()
   email: string;
 
   @IsString()
   @Length(6, 20, { message: 'Length not correct' })
   password: string;
+}
+
+export class InputEmailModel {
+  @Trim()
+  @IsString()
+  @IsOptionalEmail()
+  email: string;
+}
+
+export class InputPasswordAndCode {
+  @Trim()
+  @IsString()
+  newPassword: string;
+
+  @Trim()
+  @IsString()
+  recoveryCode: string;
+}
+
+export class InputConfirmationCodeModel {
+  @Trim()
+  @IsString()
+  code: string;
 }
 
 export type UserDbModel = {

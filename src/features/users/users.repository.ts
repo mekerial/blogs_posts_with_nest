@@ -5,10 +5,17 @@ import { QueryUserInputModel } from '../../common/types';
 import { UserDbModel } from './types/user.types';
 import { transformUserToViewModel } from './types/mappers';
 import { UserDocument } from './schemas/user.schema';
+import { PasswordRecoveryDocument } from './schemas/passwords-recovery.schema';
+import { PasswordService } from '../../applications/password.service';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<UserDocument>,
+    @InjectModel('PasswordRecovery')
+    private passwordRecoveryModel: Model<PasswordRecoveryDocument>,
+    protected passwordService: PasswordService,
+  ) {}
   async findUsers(sortData: QueryUserInputModel) {
     const sortBy = sortData.sortBy ?? 'createdAt';
     const sortDirection = sortData.sortDirection ?? 'desc';
@@ -100,7 +107,7 @@ export class UsersRepository {
         ],
       })
       .lean();
-    if (!user[0]) {
+    if (user[0]) {
       return null;
     }
     return user[0];
@@ -117,5 +124,110 @@ export class UsersRepository {
     }
 
     return true;
+  }
+
+  async recoveryConfirmationCode(userId: string, code: string, date: Date) {
+    await this.userModel.updateOne(
+      { userId },
+      {
+        $set: {
+          'emailConfirmation.confirmationCode': code,
+          'emailConfirmation.expirationDate': date,
+        },
+      },
+    );
+    return true;
+  }
+
+  async findUserByConfirmationCode(confirmationCode: string) {
+    const user = await this.userModel
+      .find({
+        'emailConfirmation.confirmationCode': confirmationCode,
+      })
+      .lean();
+    if (user[0]) {
+      return false;
+    }
+    return user[0];
+  }
+
+  async updateConfirmation(userId: string) {
+    const result = await this.userModel
+      .updateOne(
+        { _id: userId },
+        { $set: { 'emailConfirmation.isConfirmed': true } },
+      )
+      .exec();
+    return result.modifiedCount === 1;
+  }
+
+  async recoveryPasswordVerifyCode(userId: string, code: string, date: Date) {
+    const userRecoveryPassword = await this.passwordRecoveryModel
+      .find({ userId: userId })
+      .lean();
+    if (!userRecoveryPassword) {
+      await this.passwordRecoveryModel.insertMany([
+        {
+          userId: userId,
+          confirmationCode: code,
+          expirationDate: date,
+        },
+      ]);
+      return true;
+    }
+
+    await this.passwordRecoveryModel.updateOne(
+      { userId: userId },
+      { $set: { recoveryCode: code, expirationDate: date } },
+    );
+
+    return true;
+  }
+  async getRecoveryPasswordByVerifyCode(code: string) {
+    const recoveryPassword = await this.passwordRecoveryModel
+      .find({ recoveryCode: code })
+      .lean();
+
+    if (!recoveryPassword[0]) {
+      return null;
+    }
+    return {
+      userId: recoveryPassword[0].userId,
+      recoveryCode: recoveryPassword[0].recoveryCode,
+      expirationDate: recoveryPassword[0].expirationDate,
+    };
+  }
+
+  async updatePassword(userId: string, newPassword: string) {
+    const recoveryPassword = await this.passwordRecoveryModel
+      .find({ userId: userId })
+      .lean();
+    if (!recoveryPassword[0]) {
+      return false;
+    }
+
+    const passwordSalt = await this.passwordService.generateSalt(10);
+    const newPasswordHash = await this.passwordService.generateHash(
+      newPassword,
+      passwordSalt,
+    );
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
+    const result = await this.userModel
+      .updateOne(
+        { _id: userObjectId },
+        {
+          $set: {
+            'accountData.passwordHash': newPasswordHash,
+            'accountData.passwordSalt': passwordSalt,
+          },
+        },
+      )
+      .exec();
+
+    await this.passwordRecoveryModel.deleteOne({ userId: userId });
+
+    return result.modifiedCount === 1;
   }
 }
