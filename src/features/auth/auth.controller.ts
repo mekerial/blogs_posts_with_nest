@@ -77,8 +77,7 @@ export class AuthController {
     const setNewPassword = await this.authService.setNewPassword(inputData);
     if (!setNewPassword) {
       return BadRequestException;
-
-      return;
     }
+    return;
   }
 }
