@@ -8,6 +8,7 @@ import { PasswordService } from '../../applications/password.service';
 import { JwtService } from '../../applications/jwt.service';
 import { NameIsExistConstraint } from '../../infrastructure/decorators/validate/name-is-exist.decorator';
 import { PasswordRecoverySchema } from './schemas/passwords-recovery.schema';
+import { EmailIsExistConstraint } from '../../infrastructure/decorators/validate/email-is-exist.decorator';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PasswordRecoverySchema } from './schemas/passwords-recovery.schema';
     PasswordService,
     JwtService,
     NameIsExistConstraint,
+    EmailIsExistConstraint,
   ],
 })
 export class UsersModule {}

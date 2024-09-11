@@ -5,9 +5,11 @@ import {
 } from '@nestjs/common';
 import { AppModule } from '../app.module';
 import { useContainer } from 'class-validator';
+import { HttpExceptionFilter } from '../infrastructure/exception-filters/http-exception-filter';
 
 export const applyAppSettings = (app: INestApplication) => {
   setAppPipes(app);
+  setAppExceptionFilters(app);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 };
 
@@ -24,7 +26,7 @@ const setAppPipes = (app: INestApplication) => {
 
           constraintKeys.forEach((cKey) => {
             const msg = e.constraints![cKey];
-            customErrors.push({ key: e.property, message: msg });
+            customErrors.push({ field: e.property, message: msg });
           });
         });
         // Error 400
@@ -32,4 +34,7 @@ const setAppPipes = (app: INestApplication) => {
       },
     }),
   );
+};
+const setAppExceptionFilters = (app: INestApplication) => {
+  app.useGlobalFilters(new HttpExceptionFilter());
 };

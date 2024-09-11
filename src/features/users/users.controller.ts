@@ -8,14 +8,18 @@ import {
   Param,
   Post,
   Query,
+  UnauthorizedException,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { QueryUserInputModel } from '../../common/types';
 import { CreateUserInputModelType } from './types/user.types';
 import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
+import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';
 
 @UseFilters(HttpExceptionFilter)
+@UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(protected usersService: UsersService) {}
@@ -32,7 +36,13 @@ export class UsersController {
 
   @Post()
   async createUser(@Body() inputModel: CreateUserInputModelType) {
+    if (!inputModel.login || !inputModel.password || !inputModel.email) {
+      throw new UnauthorizedException();
+    }
     const createUser = await this.usersService.createUser(inputModel);
+    if (!createUser) {
+      throw new UnauthorizedException();
+    }
     return createUser;
   }
 

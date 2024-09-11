@@ -107,7 +107,7 @@ export class UsersRepository {
         ],
       })
       .lean();
-    if (user[0]) {
+    if (!user[0]) {
       return null;
     }
     return user[0];
@@ -116,6 +116,18 @@ export class UsersRepository {
   async nameIsExist(value: string) {
     const user = await this.userModel
       .find({ 'accountData.login': value })
+      .lean()
+      .exec();
+
+    if (user.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
+  async emailIsExist(value: string) {
+    const user = await this.userModel
+      .find({ 'accountData.email': value })
       .lean()
       .exec();
 

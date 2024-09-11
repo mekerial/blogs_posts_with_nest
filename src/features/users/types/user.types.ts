@@ -2,23 +2,31 @@ import { IsString, Length } from 'class-validator';
 import { Trim } from '../../../infrastructure/decorators/transform/trim';
 import { IsOptionalEmail } from '../../../infrastructure/decorators/validate/is-optional-email';
 import { NameIsExist } from '../../../infrastructure/decorators/validate/name-is-exist.decorator';
+import { EmailIsExist } from '../../../infrastructure/decorators/validate/email-is-exist.decorator';
 
 export class CreateUserInputModelType {
   @Trim()
   @IsString()
-  @Length(5, 20, { message: 'login is incorrect!' })
+  @Length(3, 10, { message: 'login is incorrect!' })
   @NameIsExist()
   login: string;
 
   @Trim()
   @IsString()
   @IsOptionalEmail()
+  @EmailIsExist()
   email: string;
 
   @IsString()
   @Length(6, 20, { message: 'Length not correct' })
   password: string;
 }
+
+export type CreateUserWithoutValidation = {
+  login: string;
+  email: string;
+  password: string;
+};
 
 export class InputEmailModel {
   @Trim()

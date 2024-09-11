@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
   Post,
   UnauthorizedException,
   UseFilters,
@@ -25,6 +26,7 @@ export class AuthController {
     protected userService: UsersService,
   ) {}
   @Post('login')
+  @HttpCode(200)
   async userLogin(@Body() inputModel: LoginInputModel) {
     const accessToken = await this.authService.loginUser(inputModel);
     if (!accessToken) {
@@ -33,6 +35,7 @@ export class AuthController {
     return { accessToken: accessToken };
   }
   @Post('registration')
+  @HttpCode(204)
   async registrationUser(@Body() inputModel: CreateUserInputModelType) {
     const regUser = await this.authService.registrateUser(inputModel);
     if (!regUser) {
@@ -41,6 +44,7 @@ export class AuthController {
     return;
   }
   @Post('registration-email-resending')
+  @HttpCode(204)
   async regEmailResend(@Body() inputModel: InputEmailModel) {
     const resendEmail = await this.authService.resendEmailConfirm(inputModel);
     if (!resendEmail) {
@@ -50,10 +54,11 @@ export class AuthController {
   }
 
   @Post('registration-confirmation')
+  @HttpCode(204)
   async confirmEmail(@Body() inputModel: InputConfirmationCodeModel) {
     const confirmEmail = await this.authService.confirmEmail(inputModel.code);
     if (!confirmEmail) {
-      return BadRequestException;
+      throw new BadRequestException();
     }
     return;
   }
