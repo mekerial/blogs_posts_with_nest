@@ -15,7 +15,7 @@ export const emailAdapter = {
       },
     });
 
-    const info = await transport.sendMail({
+    const info = transport.sendMail({
       from: 'mekerial <liprixgremory01@gmail.com>',
       to: email,
       subject: emailSubject.confirmationRegistration,
@@ -38,7 +38,7 @@ export const emailAdapter = {
       },
     });
 
-    const info = await transport.sendMail({
+    const info = transport.sendMail({
       from: 'mekerial <liprixgremory01@gmail.com>',
       to: email,
       subject: emailSubject.passwordRecovery,
