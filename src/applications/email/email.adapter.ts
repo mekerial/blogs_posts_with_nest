@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import * as process from 'process';
 import { emailSubject } from './email.manager';
 
-const url = process.env.URL;
+const url = process.env.URL || 'https://blogs-posts-with-nest.onrender.com/';
 
 export const emailAdapter = {
   send() {},
