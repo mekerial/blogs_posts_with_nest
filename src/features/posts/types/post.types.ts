@@ -29,6 +29,12 @@ export type UpdatePostModel = {
   blogId?: string;
 };
 
+export type NewestLike = {
+  userId: string;
+  status: string;
+  createdAt: Date;
+};
+
 export type PostDbModel = {
   title: string;
   shortDescription: string;
@@ -36,6 +42,11 @@ export type PostDbModel = {
   blogId: string;
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+    newestLikes: NewestLike[];
+  };
 };
 
 export type PostViewModel = {
@@ -50,6 +61,6 @@ export type PostViewModel = {
     likesCount: number;
     dislikesCount: number;
     myStatus: string;
-    newestLikes: string[];
+    newestLikes: [];
   };
 };

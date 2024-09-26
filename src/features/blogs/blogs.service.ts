@@ -83,6 +83,11 @@ export class BlogsService {
       blogId: blogId,
       blogName: blog.name,
       createdAt: new Date().toISOString(),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        newestLikes: [],
+      },
     };
     const createPost = await this.postRepository.createPost(newPost);
     const createPostViewModel = await transformPostToViewModel([createPost]);

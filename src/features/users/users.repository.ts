@@ -75,7 +75,7 @@ export class UsersRepository {
     };
   }
   async getUser(userId: string) {
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).exec();
     return user;
   }
   async createUser(userData: UserDbModel) {
@@ -140,7 +140,7 @@ export class UsersRepository {
 
   async recoveryConfirmationCode(userId: string, code: string, date: Date) {
     await this.userModel.updateOne(
-      { userId },
+      { _id: userId },
       {
         $set: {
           'emailConfirmation.confirmationCode': code,
@@ -157,7 +157,7 @@ export class UsersRepository {
         'emailConfirmation.confirmationCode': confirmationCode,
       })
       .lean();
-    if (user[0]) {
+    if (!user[0]) {
       return false;
     }
     return user[0];

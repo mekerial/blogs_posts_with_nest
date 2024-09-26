@@ -15,10 +15,10 @@ export async function transformPostToViewModel(posts: any[]) {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
+        likesCount: post.extendedLikesInfo.likesCount,
+        dislikesCount: post.extendedLikesInfo.dislikesCount,
         myStatus: 'None',
-        newestLikes: [],
+        newestLikes: post.extendedLikesInfo.newestLikes,
       },
     });
   }

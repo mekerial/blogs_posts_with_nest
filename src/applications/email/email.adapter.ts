@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import * as process from 'process';
 import { emailSubject } from './email.manager';
 
-const url = process.env.URL || 'https://blogs-posts-with-nest.onrender.com/';
+const url = 'https://e5f9-37-122-53-136.ngrok-free.app/'; //process.env.URL || 'https://blogs-posts-with-nest.onrender.com/';
 
 export const emailAdapter = {
   send() {},
@@ -22,7 +22,7 @@ export const emailAdapter = {
       html: `
         <h1>Thanks for your registration</h1>
         <p>To finish registration please follow the link below:
-        <a href= '${url}registration-confirmation?code=${confirmationCode}'>complete registration</a>
+        <a href= '${url}auth/registration-confirmation?code=${confirmationCode}'>complete registration</a>
         </p>
     `,
     });
@@ -45,7 +45,7 @@ export const emailAdapter = {
       html: `
         <h1>Password recovery</h1>
         <p>To recovery password use this link:
-        <a href='${url}new-password?recoveryCode=${confirmationCode}'>password recovery</a>
+        <a href='${url}auth/new-password?recoveryCode=${confirmationCode}'>password recovery</a>
         </p>`,
     });
     return info;

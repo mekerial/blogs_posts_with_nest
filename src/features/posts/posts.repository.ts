@@ -42,7 +42,7 @@ export class PostsRepository {
 
   async getPost(postId: string) {
     if (mongoose.Types.ObjectId.isValid(postId)) {
-      const post = await this.postModel.findById(postId);
+      const post = await this.postModel.findById(postId).exec();
 
       return post;
     }

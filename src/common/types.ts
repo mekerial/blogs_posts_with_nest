@@ -21,3 +21,10 @@ export type QueryPostInputModel = {
   sortBy?: string;
   sortDirection?: string;
 };
+
+export type QueryCommentInputModel = {
+  sortBy?: string;
+  sortDirection?: string;
+  pageNumber?: number;
+  pageSize?: number;
+};

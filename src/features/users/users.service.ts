@@ -51,7 +51,7 @@ export class UsersService {
   async registrateUser(userData: CreateUserInputModelType) {
     const confirmationCode = uuidv4();
     const codeExpirationDate = add(new Date(), {
-      minutes: 5,
+      minutes: 15,
     }).toISOString();
 
     const passwordSalt = await this.passwordService.generateSalt(10);
@@ -112,7 +112,7 @@ export class UsersService {
     }
     const code = uuidv4();
     const date = add(new Date(), {
-      minutes: 5,
+      minutes: 15,
     });
 
     await this.usersRepository.recoveryConfirmationCode(
@@ -125,15 +125,23 @@ export class UsersService {
     return true;
   }
 
-  async confirmEmail(confirmationCode: string) {
-    const user =
-      await this.usersRepository.findUserByConfirmationCode(confirmationCode);
+  async confirmEmail(code: string) {
+    const user = await this.usersRepository.findUserByConfirmationCode(code);
     if (!user) {
-      return false;
+      return {
+        flag: false,
+        key: 'code',
+      };
+    }
+    if (user.emailConfirmation.isConfirmed) {
+      return {
+        flag: false,
+        key: 'code',
+      };
     }
 
     if (
-      confirmationCode === user.emailConfirmation.confirmationCode &&
+      code === user.emailConfirmation.confirmationCode &&
       user.emailConfirmation.expirationDate > new Date()
     ) {
       const result = await this.usersRepository.updateConfirmation(
@@ -141,9 +149,15 @@ export class UsersService {
       );
 
       if (!result) {
-        return false;
+        return {
+          flag: false,
+          key: 'code',
+        };
       }
-      return true;
+      return {
+        flag: true,
+        key: 'none',
+      };
     }
   }
 

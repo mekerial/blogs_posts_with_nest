@@ -28,12 +28,17 @@ export class PostsService {
   async createPost(postData: CreatePostModel) {
     const findBlog = await this.blogsRepository.getBlog(postData.blogId);
     if (!findBlog) {
-      return;
+      return false;
     }
     const post = {
       ...postData,
       blogName: findBlog.name,
       createdAt: new Date().toISOString(),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        newestLikes: [],
+      },
     };
     const createPost = await this.postsRepository.createPost(post);
     const createViewPost = await transformPostToViewModel([createPost]);
