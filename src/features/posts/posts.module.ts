@@ -15,15 +15,19 @@ import { UsersRepository } from '../users/users.repository';
 import { UserSchema } from '../users/schemas/user.schema';
 import { PasswordService } from '../../applications/password.service';
 import { PasswordRecoverySchema } from '../users/schemas/passwords-recovery.schema';
+import { LikeSchema } from '../likes/schemas/like.schema';
+import { LikesPostRepository } from '../likes/likes.repository';
+import { PostMappers } from './types/mappers';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Blog', schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: 'Comment', schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([
+      { name: 'Blog', schema: BlogSchema },
+      { name: 'Post', schema: PostSchema },
+      { name: 'Comment', schema: CommentSchema },
+      { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
+      { name: 'Like', schema: LikeSchema },
     ]),
   ],
   controllers: [PostsController],
@@ -37,6 +41,8 @@ import { PasswordRecoverySchema } from '../users/schemas/passwords-recovery.sche
     UsersService,
     UsersRepository,
     PasswordService,
+    LikesPostRepository,
+    PostMappers,
   ],
 })
 export class PostsModule {}

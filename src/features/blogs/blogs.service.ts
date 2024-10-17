@@ -5,13 +5,16 @@ import { BlogsRepository } from './blogs.repository';
 import { transformBlogToViewModel } from './types/mappers';
 import { PostsRepository } from '../posts/posts.repository';
 import { CreatePostModelByBlog } from '../posts/types/post.types';
-import { transformPostToViewModel } from '../posts/types/mappers';
+import { PostMappers } from '../posts/types/mappers';
+import { JwtService } from '../../applications/jwt.service';
 
 @Injectable()
 export class BlogsService {
   constructor(
     protected blogsRepository: BlogsRepository,
     protected postRepository: PostsRepository,
+    protected jwtService: JwtService,
+    protected postMappers: PostMappers,
   ) {}
   async getAllBlogs(sortData: QueryBlogInputModel) {
     return await this.blogsRepository.getAllBlogs(sortData);
@@ -65,12 +68,34 @@ export class BlogsService {
     return updateBlog;
   }
 
-  async getAllPostsByBlog(blogId: string, sortData: QueryPostInputModel) {
+  async getAllPostsByBlog(
+    blogId: string,
+    sortData: QueryPostInputModel,
+    accessToken: string,
+  ) {
     const findBlog = await this.blogsRepository.getBlog(blogId);
     if (!findBlog) {
       return;
     }
-    return await this.postRepository.getAllPostsByBlogId(blogId, sortData);
+    let userId;
+    if (accessToken) {
+      userId = this.jwtService.getUserIdByAccessToken(accessToken).toString();
+    }
+
+    const postsWithoutMapper = await this.postRepository.getAllPostsByBlogId(
+      blogId,
+      sortData,
+    );
+    const postsWithMyStatus =
+      await this.postMappers.transformPostsWithLikeStatus(
+        postsWithoutMapper.items,
+        userId,
+      );
+    const postsWithPaginationAndMapper = {
+      ...postsWithoutMapper,
+      items: postsWithMyStatus,
+    };
+    return postsWithPaginationAndMapper;
   }
 
   async createPostByBlog(blogId: string, postData: CreatePostModelByBlog) {
@@ -90,7 +115,9 @@ export class BlogsService {
       },
     };
     const createPost = await this.postRepository.createPost(newPost);
-    const createPostViewModel = await transformPostToViewModel([createPost]);
+    const createPostViewModel = await this.postMappers.transformPostToViewModel(
+      [createPost],
+    );
     return createPostViewModel[0];
   }
 }

@@ -7,9 +7,11 @@ import { BlogSchema } from '../blogs/schemas/blog.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Blog', schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'Blog', schema: BlogSchema },
+      { name: 'Post', schema: PostSchema },
+      { name: 'User', schema: UserSchema },
+    ]),
   ],
   controllers: [UtilsController],
   providers: [],

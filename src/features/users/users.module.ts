@@ -12,8 +12,8 @@ import { EmailIsExistConstraint } from '../../infrastructure/decorators/validate
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
     ]),
   ],

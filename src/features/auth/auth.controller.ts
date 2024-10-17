@@ -33,7 +33,7 @@ export class AuthController {
     if (!accessToken) {
       throw new UnauthorizedException();
     }
-    response.cookie('refreshToken', 'superPuperRefreshToken', {
+    response.cookie('refreshToken', 'superPuper.Refresh.Token', {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',

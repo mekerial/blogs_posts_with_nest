@@ -48,7 +48,6 @@ export class CommentsService {
     if (!user) {
       return false;
     }
-
     const findPost = await this.postsRepository.getPost(postId);
     if (!findPost) {
       return false;
@@ -68,22 +67,35 @@ export class CommentsService {
     };
 
     const createComment = await this.commentsRepository.createComment(comment);
-
     return createComment;
   }
 
   async editComment(userId: string, commentId: string, content: string) {
     const comment = await this.commentsRepository.getComment(commentId);
+    if (!comment) {
+      return {
+        flag: false,
+        status: 404,
+      };
+    }
     if (userId !== comment.commentatorInfo.userId) {
       return {
         flag: false,
         status: 403,
       };
     }
-    return await this.commentsRepository.editComment(commentId, content);
+    return {
+      flag: true,
+      data: await this.commentsRepository.editComment(commentId, content),
+      status: 200,
+    };
   }
 
   async deleteComment(commentId: string) {
+    const findComment = await this.commentsRepository.getComment(commentId);
+    if (!findComment) {
+      throw new NotFoundException();
+    }
     const deleteComment =
       await this.commentsRepository.deleteComment(commentId);
     if (!deleteComment) {

@@ -1,33 +1,69 @@
-import { IsString, Length } from 'class-validator';
+import { IsEnum, IsString, Length } from 'class-validator';
 
 export class CreatePostModel {
   @IsString()
-  @Length(0, 30, { message: 'Length title is incorrect' })
+  @Length(1, 30, { message: 'Length title is incorrect' })
   title: string;
 
   @IsString()
-  @Length(0, 100, { message: 'Length shortDescription is incorrect' })
+  @Length(1, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription: string;
 
   @IsString()
-  @Length(0, 1000, { message: 'Length content is incorrect' })
+  @Length(1, 1000, { message: 'Length content is incorrect' })
   content: string;
 
   blogId: string;
 }
 
-export type CreatePostModelByBlog = {
+export class CreatePostModelByBlog {
+  @IsString()
+  @Length(1, 30, { message: 'Length title is incorrect' })
   title: string;
-  shortDescription: string;
-  content: string;
-};
 
-export type UpdatePostModel = {
+  @IsString()
+  @Length(1, 100, { message: 'Length shortDescription is incorrect' })
+  shortDescription: string;
+
+  @IsString()
+  @Length(1, 1000, { message: 'Length content is incorrect' })
+  content: string;
+}
+
+export class UpdatePostModel {
+  @IsString()
+  @Length(1, 30, { message: 'Length title is incorrect' })
   title?: string;
+
+  @IsString()
+  @Length(1, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription?: string;
+
+  @IsString()
+  @Length(1, 1000, { message: 'Length content is incorrect' })
   content?: string;
+
   blogId?: string;
-};
+
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+  };
+}
+
+export enum LikeStatus {
+  None = 'None',
+  Like = 'Like',
+  Dislike = 'Dislike',
+}
+
+// Шаг 2: Создаем DTO для валидации входных данных
+export class LikeStatusDto {
+  @IsEnum(LikeStatus, {
+    message: 'likeStatus must be either Like, Dislike, or None',
+  })
+  likeStatus: LikeStatus;
+}
 
 export type NewestLike = {
   userId: string;

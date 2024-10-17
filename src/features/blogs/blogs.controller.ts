@@ -9,13 +9,17 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { QueryBlogInputModel } from '../../common/types';
 import { CreateBlogModel } from './types/blog.types';
 import { CreatePostModelByBlog } from '../posts/types/post.types';
 import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
+import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';
+import { Request } from 'express';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('blogs')
@@ -34,13 +38,14 @@ export class BlogsController {
     }
     return blog;
   }
-
+  @UseGuards(BasicAuthGuard)
   @Post()
   async createBlog(@Body() inputModel: CreateBlogModel) {
     const createBlog = await this.blogsService.createBlog(inputModel);
     return createBlog;
   }
 
+  @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(204)
   async updateBlog(
@@ -53,7 +58,7 @@ export class BlogsController {
     }
     return updateBlog;
   }
-
+  @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(204)
   async deleteBlog(@Param('id') blogId: string) {
@@ -68,14 +73,24 @@ export class BlogsController {
   async getAllPostsByBlog(
     @Param('id') blogId: string,
     @Query() sortData: QueryBlogInputModel,
+    @Req() request: Request,
   ) {
-    const posts = await this.blogsService.getAllPostsByBlog(blogId, sortData);
+    let accessToken;
+    if (request.headers.authorization) {
+      accessToken = request.headers.authorization.split(' ')[1];
+    }
+    const posts = await this.blogsService.getAllPostsByBlog(
+      blogId,
+      sortData,
+      accessToken,
+    );
     if (!posts) {
       throw new NotFoundException(`Blog with id ${blogId} not found`);
     }
     return posts;
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post(':id/posts')
   async createPostByBlog(
     @Param('id') blogId: string,

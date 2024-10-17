@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 export class JwtService {
   async createJWT(userId: string) {
     const accessToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
-      expiresIn: '5m',
+      expiresIn: '10m',
     });
     return accessToken;
   }

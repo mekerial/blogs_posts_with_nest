@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, SortOrder } from 'mongoose';
 import { PostDbModel, UpdatePostModel } from './types/post.types';
-import { Post } from './schemas/post.schema';
+import { Post, PostDocument } from './schemas/post.schema';
 import { QueryPostInputModel } from '../../common/types';
-import { transformPostToViewModel } from './types/mappers';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDbModel>) {}
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
   async getAllPosts(sortData: QueryPostInputModel) {
     const pageNumber = sortData.pageNumber ?? 1;
@@ -29,14 +28,13 @@ export class PostsRepository {
     const totalCount = await this.postModel.countDocuments({});
 
     const pagesCount = Math.ceil(totalCount / pageSize);
-    const postsViewModel = await transformPostToViewModel(posts);
 
     return {
       pagesCount,
       page: +pageNumber,
       pageSize: pageSize,
       totalCount,
-      items: postsViewModel,
+      items: posts,
     };
   }
 
@@ -67,6 +65,24 @@ export class PostsRepository {
     return updatePost;
   }
 
+  async updatePostLikesInfo(postId: string, updateData: UpdatePostModel) {
+    const updatePost = await this.postModel.updateOne(
+      { _id: postId },
+      {
+        $set: {
+          title: updateData.title,
+          shortDescription: updateData.shortDescription,
+          content: updateData.content,
+          extendedLikesInfo: {
+            likesCount: updateData.extendedLikesInfo.likesCount,
+            dislikesCount: updateData.extendedLikesInfo.dislikesCount,
+          },
+        },
+      },
+    );
+    return updatePost;
+  }
+
   async getAllPostsByBlogId(blogId: string, sortData: QueryPostInputModel) {
     const pageNumber = sortData.pageNumber ?? 1;
     const pageSize = +(sortData.pageSize ?? 10);
@@ -86,14 +102,13 @@ export class PostsRepository {
     const totalCount = await this.postModel.countDocuments({ blogId: blogId });
 
     const pagesCount = Math.ceil(totalCount / pageSize);
-    const postsViewModel = await transformPostToViewModel(posts);
 
     return {
       pagesCount,
       page: +pageNumber,
       pageSize: pageSize,
       totalCount,
-      items: postsViewModel,
+      items: posts,
     };
   }
 

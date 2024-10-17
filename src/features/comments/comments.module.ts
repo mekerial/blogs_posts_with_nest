@@ -15,10 +15,10 @@ import { JwtService } from '../../applications/jwt.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Comment', schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([
+      { name: 'Comment', schema: CommentSchema },
+      { name: 'Post', schema: PostSchema },
+      { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
     ]),
   ],
