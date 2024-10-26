@@ -4,6 +4,9 @@ import { CommentsRepository } from './comments.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { CommentCreateModel } from './types/comment.types';
 import { UsersRepository } from '../users/users.repository';
+import { JwtService } from '../../applications/jwt.service';
+import { CommentMappers } from './types/mappers';
+import { CommentLikeRepository } from '../likes/commentLike.repository';
 
 @Injectable()
 export class CommentsService {
@@ -11,6 +14,9 @@ export class CommentsService {
     protected commentsRepository: CommentsRepository,
     protected postsRepository: PostsRepository,
     protected usersRepository: UsersRepository,
+    protected commentMappers: CommentMappers,
+    protected jwtService: JwtService,
+    protected commentLikeRepository: CommentLikeRepository,
   ) {}
   async getAllComments(
     postId: string,
@@ -22,21 +28,38 @@ export class CommentsService {
     if (!post) {
       return false;
     }
+    let userId;
+    if (accessToken) {
+      userId = this.jwtService.getUserIdByAccessToken(accessToken).toString();
+    }
+
     const commentsWithPagination =
       await this.commentsRepository.getAllCommentsByPost(postId, sortData);
-    if (!accessToken) {
-      return commentsWithPagination;
-    } else {
-      return commentsWithPagination;
-      // check user and add my_status map
-    }
+    commentsWithPagination.items =
+      await this.commentMappers.transformCommentsWithLikeStatus(
+        commentsWithPagination.items,
+        userId,
+      );
+    return commentsWithPagination;
   }
-  async getComment(commentId: string) {
+  async getComment(commentId: string, accessToken: string) {
     const findComment = await this.commentsRepository.getComment(commentId);
+    let userId;
+    if (accessToken) {
+      userId = this.jwtService.getUserIdByAccessToken(accessToken).toString();
+    }
+
     if (!findComment) {
       return false;
     }
-    return findComment;
+
+    const commentViewModel =
+      await this.commentMappers.transformCommentsWithLikeStatus(
+        [findComment],
+        userId,
+      );
+
+    return commentViewModel[0];
   }
 
   async createComment(
@@ -67,7 +90,23 @@ export class CommentsService {
     };
 
     const createComment = await this.commentsRepository.createComment(comment);
-    return createComment;
+
+    let newComment;
+    if (createComment) {
+      newComment = {
+        id: createComment._id,
+        content: comment.content,
+        commentatorInfo: comment.commentatorInfo,
+        createdAt: comment.createdAt,
+        likesInfo: {
+          likesCount: comment.likesInfo.likesCount,
+          dislikesCount: comment.likesInfo.dislikesCount,
+          myStatus: 'None',
+        },
+      };
+    }
+
+    return newComment;
   }
 
   async editComment(userId: string, commentId: string, content: string) {
@@ -100,6 +139,70 @@ export class CommentsService {
       await this.commentsRepository.deleteComment(commentId);
     if (!deleteComment) {
       throw new NotFoundException();
+    }
+    return true;
+  }
+
+  async createLikeStatusComment(
+    commentId: string,
+    likeStatus: string,
+    userId: string,
+  ) {
+    const findComment = await this.commentsRepository.getComment(commentId);
+    if (!findComment) {
+      return false;
+    }
+
+    const findLike = await this.commentLikeRepository.findLikeStatus(
+      userId,
+      commentId,
+    );
+    if (findLike) {
+      if (findLike.status === likeStatus) {
+        return true;
+      } else {
+        if (findLike.status === 'Like') {
+          findComment.likesInfo.likesCount--;
+          await this.commentsRepository.updateCommentLikesInfo(
+            commentId,
+            findComment,
+          );
+          await this.commentLikeRepository.deleteLike(userId, commentId);
+        }
+        if (findLike.status === 'Dislike') {
+          findComment.likesInfo.dislikesCount--;
+          await this.commentsRepository.updateCommentLikesInfo(
+            commentId,
+            findComment,
+          );
+        }
+      }
+      findLike.status = likeStatus;
+      await this.commentLikeRepository.updateLikeStatus(
+        findLike.commentId,
+        findLike.status,
+        findLike.userId,
+      );
+    }
+    //create like status
+    await this.commentLikeRepository.createCommentLike(
+      commentId,
+      likeStatus,
+      userId,
+    );
+    if (likeStatus === 'Like') {
+      findComment.likesInfo.likesCount++;
+      await this.commentsRepository.updateCommentLikesInfo(
+        commentId,
+        findComment,
+      );
+    }
+    if (likeStatus === 'Dislike') {
+      findComment.likesInfo.dislikesCount++;
+      await this.commentsRepository.updateCommentLikesInfo(
+        commentId,
+        findComment,
+      );
     }
     return true;
   }

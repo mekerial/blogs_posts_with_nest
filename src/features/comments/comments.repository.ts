@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import mongoose, { Model, SortOrder } from 'mongoose';
 import { QueryCommentInputModel } from '../../common/types';
-import { CommentDbModel } from './types/comment.types';
+import { CommentDbModel, UpdateCommentModel } from './types/comment.types';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
@@ -43,10 +43,7 @@ export class CommentsRepository {
   }
   async getComment(commentId: string) {
     if (mongoose.Types.ObjectId.isValid(commentId)) {
-      const findComment = await this.commentModel
-        .findById(commentId)
-        .lean()
-        .exec();
+      const findComment = await this.commentModel.findById(commentId).exec();
       return findComment;
     }
     return;
@@ -79,5 +76,24 @@ export class CommentsRepository {
       .deleteOne({ _id: new ObjectId(commentId) })
       .exec();
     return deleteComment.deletedCount;
+  }
+
+  async updateCommentLikesInfo(
+    commentId: string,
+    updateData: UpdateCommentModel,
+  ) {
+    const updateComment = await this.commentModel.updateOne(
+      { _id: commentId },
+      {
+        $set: {
+          content: updateData.content,
+          likesInfo: {
+            likesCount: updateData.likesInfo.likesCount,
+            dislikesCount: updateData.likesInfo.dislikesCount,
+          },
+        },
+      },
+    );
+    return updateComment;
   }
 }

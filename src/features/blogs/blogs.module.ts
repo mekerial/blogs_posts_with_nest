@@ -8,8 +8,8 @@ import { PostSchema } from '../posts/schemas/post.schema';
 import { PostsRepository } from '../posts/posts.repository';
 import { JwtService } from '../../applications/jwt.service';
 import { PostMappers } from '../posts/types/mappers';
-import { LikesPostRepository } from '../likes/likes.repository';
-import { LikeSchema } from '../likes/schemas/like.schema';
+import { PostLikeRepository } from '../likes/postLike.repository';
+import { PostLikeSchema } from '../likes/schemas/postLikeSchema';
 import { UsersRepository } from '../users/users.repository';
 import { UserSchema } from '../users/schemas/user.schema';
 import { PasswordRecoverySchema } from '../users/schemas/passwords-recovery.schema';
@@ -20,7 +20,7 @@ import { PasswordService } from '../../applications/password.service';
     MongooseModule.forFeature([
       { name: 'Blog', schema: BlogSchema },
       { name: 'Post', schema: PostSchema },
-      { name: 'Like', schema: LikeSchema },
+      { name: 'PostLike', schema: PostLikeSchema },
       { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
     ]),
@@ -32,7 +32,7 @@ import { PasswordService } from '../../applications/password.service';
     PostsRepository,
     JwtService,
     PostMappers,
-    LikesPostRepository,
+    PostLikeRepository,
     PasswordService,
     UsersRepository,
   ],

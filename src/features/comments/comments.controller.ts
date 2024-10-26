@@ -8,15 +8,35 @@ import {
   NotFoundException,
   Req,
   Res,
+  Get,
+  HttpCode,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { CommentCreateModel } from './types/comment.types';
-import { Request, Response } from 'express';
+import { request, Request, Response } from 'express';
+import { LikeStatusDto } from '../posts/types/post.types';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
+
+  @Get('/:id')
+  async getComment(@Param('id') commentId: string, @Req() request: Request) {
+    let accessToken;
+    if (request.headers.authorization) {
+      accessToken = request.headers.authorization.split(' ')[1];
+    }
+    const findComment = await this.commentsService.getComment(
+      commentId,
+      accessToken,
+    );
+    if (!findComment) {
+      throw new NotFoundException(`Comment with id ${commentId} not found`);
+    }
+
+    return findComment;
+  }
 
   @Put('/:id')
   @UseGuards(AuthGuard)
@@ -46,5 +66,23 @@ export class CommentsController {
   async deleteComment(@Param('id') commentId: string) {
     const deleteComment = await this.commentsService.deleteComment(commentId);
     return deleteComment;
+  }
+
+  @Put('/:id/like-status')
+  @UseGuards(AuthGuard)
+  @HttpCode(204)
+  async likeComment(
+    @Param(':id') commentId: string,
+    @Body() statusData: LikeStatusDto,
+  ) {
+    const likeComment = await this.commentsService.createLikeStatusComment(
+      commentId,
+      statusData.likeStatus,
+      request.userId.toString(),
+    );
+    if (!likeComment) {
+      throw new NotFoundException(`Comment with id ${commentId} not found`);
+    }
+    return commentId;
   }
 }

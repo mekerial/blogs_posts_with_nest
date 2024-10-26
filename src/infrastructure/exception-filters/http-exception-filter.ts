@@ -21,10 +21,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
 
       const responseBody: any = exception.getResponse();
+
       if (Array.isArray(responseBody.message)) {
-        responseBody.message.forEach((e) =>
-          errorsResponse.errorsMessages.push(e),
-        );
+        // Фильтрация дубликатов по полю field
+        const uniqueErrors = responseBody.message.reduce((acc, current) => {
+          const existingError = acc.find((err) => err.field === current.field);
+          if (!existingError) {
+            acc.push(current);
+          }
+          return acc;
+        }, []);
+
+        uniqueErrors.forEach((e) => errorsResponse.errorsMessages.push(e));
       } else {
         errorsResponse.errorsMessages.push(responseBody.message);
       }

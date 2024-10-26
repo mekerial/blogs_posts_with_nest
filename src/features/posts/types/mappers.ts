@@ -1,11 +1,11 @@
 import { HydratedDocument } from 'mongoose';
 import { Post } from '../schemas/post.schema';
-import { LikesPostRepository } from '../../likes/likes.repository';
+import { PostLikeRepository } from '../../likes/postLike.repository';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PostMappers {
-  constructor(protected likePostRepository: LikesPostRepository) {}
+  constructor(protected postLikeRepository: PostLikeRepository) {}
   async transformPostToViewModel(posts: any[]) {
     //const postsViewModel: PostViewModel[] = [];
     const postsViewModel = [];
@@ -34,11 +34,11 @@ export class PostMappers {
     if (userId) {
       const postViewModelWithStatus = [];
       for (let i = 0; i < posts.length; i++) {
-        const myStatus = await this.likePostRepository.findLikeStatus(
+        const myStatus = await this.postLikeRepository.findLikeStatus(
           userId,
           posts[i]._id,
         );
-        const newestLikes = await this.likePostRepository.findNewestLikes(
+        const newestLikes = await this.postLikeRepository.findNewestLikes(
           posts[i]._id,
         );
         if (myStatus) {
@@ -79,7 +79,7 @@ export class PostMappers {
     } else {
       const postViewModelWithoutStatus = [];
       for (let i = 0; i < posts.length; i++) {
-        const newestLikes = await this.likePostRepository.findNewestLikes(
+        const newestLikes = await this.postLikeRepository.findNewestLikes(
           posts[i]._id,
         );
         postViewModelWithoutStatus.push({

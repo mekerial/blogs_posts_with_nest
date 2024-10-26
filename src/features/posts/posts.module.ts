@@ -15,9 +15,13 @@ import { UsersRepository } from '../users/users.repository';
 import { UserSchema } from '../users/schemas/user.schema';
 import { PasswordService } from '../../applications/password.service';
 import { PasswordRecoverySchema } from '../users/schemas/passwords-recovery.schema';
-import { LikeSchema } from '../likes/schemas/like.schema';
-import { LikesPostRepository } from '../likes/likes.repository';
+import { PostLikeSchema } from '../likes/schemas/postLikeSchema';
+import { PostLikeRepository } from '../likes/postLike.repository';
 import { PostMappers } from './types/mappers';
+import { BlogIdIsValidConstraint } from '../../infrastructure/decorators/validate/objectId-validator';
+import { CommentMappers } from '../comments/types/mappers';
+import { CommentLikeRepository } from '../likes/commentLike.repository';
+import { CommentLikeSchema } from '../likes/schemas/commentLikeSchema';
 
 @Module({
   imports: [
@@ -27,7 +31,8 @@ import { PostMappers } from './types/mappers';
       { name: 'Comment', schema: CommentSchema },
       { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
-      { name: 'Like', schema: LikeSchema },
+      { name: 'PostLike', schema: PostLikeSchema },
+      { name: 'CommentLike', schema: CommentLikeSchema },
     ]),
   ],
   controllers: [PostsController],
@@ -41,8 +46,11 @@ import { PostMappers } from './types/mappers';
     UsersService,
     UsersRepository,
     PasswordService,
-    LikesPostRepository,
+    PostLikeRepository,
     PostMappers,
+    BlogIdIsValidConstraint,
+    CommentMappers,
+    CommentLikeRepository,
   ],
 })
 export class PostsModule {}

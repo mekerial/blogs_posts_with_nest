@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type LikeDocument = HydratedDocument<Like>;
+export type PostLikeDocument = HydratedDocument<PostLike>;
 @Schema()
-export class Like {
+export class PostLike {
   @Prop({ required: true }) userId: string;
 
   @Prop({ required: true }) postId: string;
@@ -13,4 +13,4 @@ export class Like {
   @Prop({ required: true }) addedAt: string;
 }
 
-export const LikeSchema = SchemaFactory.createForClass(Like);
+export const PostLikeSchema = SchemaFactory.createForClass(PostLike);

@@ -1,48 +1,61 @@
 import { IsEnum, IsString, Length } from 'class-validator';
+import { BlogIdIsValid } from '../../../infrastructure/decorators/validate/objectId-validator';
+import { Trim } from '../../../infrastructure/decorators/transform/trim';
 
 export class CreatePostModel {
   @IsString()
+  @Trim()
   @Length(1, 30, { message: 'Length title is incorrect' })
   title: string;
 
   @IsString()
+  @Trim()
   @Length(1, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription: string;
 
   @IsString()
+  @Trim()
   @Length(1, 1000, { message: 'Length content is incorrect' })
   content: string;
 
+  @BlogIdIsValid()
   blogId: string;
 }
 
 export class CreatePostModelByBlog {
+  @Trim()
   @IsString()
   @Length(1, 30, { message: 'Length title is incorrect' })
   title: string;
 
+  @Trim()
   @IsString()
   @Length(1, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription: string;
 
+  @Trim()
   @IsString()
   @Length(1, 1000, { message: 'Length content is incorrect' })
   content: string;
 }
 
 export class UpdatePostModel {
+  @Trim()
   @IsString()
   @Length(1, 30, { message: 'Length title is incorrect' })
   title?: string;
 
+  @Trim()
   @IsString()
   @Length(1, 100, { message: 'Length shortDescription is incorrect' })
   shortDescription?: string;
 
+  @Trim()
   @IsString()
   @Length(1, 1000, { message: 'Length content is incorrect' })
   content?: string;
 
+  @BlogIdIsValid()
   blogId?: string;
 
   extendedLikesInfo: {

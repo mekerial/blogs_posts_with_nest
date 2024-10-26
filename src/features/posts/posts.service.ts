@@ -4,7 +4,7 @@ import { QueryPostInputModel } from '../../common/types';
 import { CreatePostModel, UpdatePostModel } from './types/post.types';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { PostMappers } from './types/mappers';
-import { LikesPostRepository } from '../likes/likes.repository';
+import { PostLikeRepository } from '../likes/postLike.repository';
 import { JwtService } from '../../applications/jwt.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class PostsService {
   constructor(
     protected postsRepository: PostsRepository,
     protected blogsRepository: BlogsRepository,
-    protected likesPostRepository: LikesPostRepository,
+    protected likesPostRepository: PostLikeRepository,
     protected postMappers: PostMappers,
     protected jwtService: JwtService,
   ) {}
@@ -128,7 +128,7 @@ export class PostsService {
       );
     }
     //create like status
-    await this.likesPostRepository.createLikePost(postId, likeStatus, userId);
+    await this.likesPostRepository.createPostLike(postId, likeStatus, userId);
     if (likeStatus === 'Like') {
       findPost.extendedLikesInfo.likesCount++;
       await this.postsRepository.updatePostLikesInfo(postId, findPost);

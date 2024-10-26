@@ -12,6 +12,9 @@ import { UserSchema } from '../users/schemas/user.schema';
 import { PasswordRecoverySchema } from '../users/schemas/passwords-recovery.schema';
 import { PasswordService } from '../../applications/password.service';
 import { JwtService } from '../../applications/jwt.service';
+import { CommentMappers } from './types/mappers';
+import { CommentLikeRepository } from '../likes/commentLike.repository';
+import { CommentLikeSchema } from '../likes/schemas/commentLikeSchema';
 
 @Module({
   imports: [
@@ -20,6 +23,7 @@ import { JwtService } from '../../applications/jwt.service';
       { name: 'Post', schema: PostSchema },
       { name: 'User', schema: UserSchema },
       { name: 'PasswordRecovery', schema: PasswordRecoverySchema },
+      { name: 'CommentLike', schema: CommentLikeSchema },
     ]),
   ],
   controllers: [CommentsController],
@@ -31,6 +35,8 @@ import { JwtService } from '../../applications/jwt.service';
     UsersService,
     PasswordService,
     JwtService,
+    CommentMappers,
+    CommentLikeRepository,
   ],
 })
 export class CommentsModule {}
