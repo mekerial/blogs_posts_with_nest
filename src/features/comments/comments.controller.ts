@@ -74,6 +74,7 @@ export class CommentsController {
   async likeComment(
     @Param('id') commentId: string,
     @Body() statusData: LikeStatusDto,
+    @Req() request: Request,
   ) {
     const likeComment = await this.commentsService.createLikeStatusComment(
       commentId,
