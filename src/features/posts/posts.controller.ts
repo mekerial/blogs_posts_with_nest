@@ -112,10 +112,20 @@ export class PostsController {
   async getAllComments(
     @Query() sortData: QueryCommentInputModel,
     @Param('id') postId: string,
+    @Req() request: Request,
   ) {
     console.log('GET /posts/:id/comments');
 
-    return await this.commentsService.getAllComments(postId, sortData);
+    let accessToken;
+    if (request.headers.authorization) {
+      accessToken = request.headers.authorization.split(' ')[1];
+    }
+
+    return await this.commentsService.getAllComments(
+      postId,
+      sortData,
+      accessToken,
+    );
   }
 
   @Post(':id/comments')
