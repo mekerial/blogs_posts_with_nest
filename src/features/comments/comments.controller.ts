@@ -72,7 +72,7 @@ export class CommentsController {
   @UseGuards(AuthGuard)
   @HttpCode(204)
   async likeComment(
-    @Param(':id') commentId: string,
+    @Param('id') commentId: string,
     @Body() statusData: LikeStatusDto,
   ) {
     const likeComment = await this.commentsService.createLikeStatusComment(
