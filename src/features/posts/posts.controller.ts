@@ -121,11 +121,15 @@ export class PostsController {
       accessToken = request.headers.authorization.split(' ')[1];
     }
 
-    return await this.commentsService.getAllComments(
+    const findComments = await this.commentsService.getAllComments(
       postId,
       sortData,
       accessToken,
     );
+    if (!findComments) {
+      throw new NotFoundException('Not found post');
+    }
+    return findComments;
   }
 
   @Post(':id/comments')

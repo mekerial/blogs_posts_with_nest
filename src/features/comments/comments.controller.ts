@@ -14,7 +14,7 @@ import {
 import { CommentsService } from './comments.service';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { CommentCreateModel } from './types/comment.types';
-import { request, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { LikeStatusDto } from '../posts/types/post.types';
 
 @Controller('comments')
@@ -40,6 +40,7 @@ export class CommentsController {
 
   @Put('/:id')
   @UseGuards(AuthGuard)
+  @HttpCode(204)
   async editComment(
     @Param('id') commentId: string,
     @Body() inputData: CommentCreateModel,
@@ -62,9 +63,24 @@ export class CommentsController {
   }
 
   @Delete('/:id')
+  @HttpCode(204)
   @UseGuards(AuthGuard)
-  async deleteComment(@Param('id') commentId: string) {
-    const deleteComment = await this.commentsService.deleteComment(commentId);
+  async deleteComment(
+    @Param('id') commentId: string,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const userId = request.userId.toString();
+    const deleteComment = await this.commentsService.deleteComment(
+      userId,
+      commentId,
+    );
+    if (deleteComment.status === 404) {
+      throw new NotFoundException();
+    }
+    if (deleteComment.status === 403) {
+      response.sendStatus(403);
+    }
     return deleteComment;
   }
 

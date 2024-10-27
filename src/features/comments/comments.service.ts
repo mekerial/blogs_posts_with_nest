@@ -130,17 +130,31 @@ export class CommentsService {
     };
   }
 
-  async deleteComment(commentId: string) {
+  async deleteComment(userId: string, commentId: string) {
     const findComment = await this.commentsRepository.getComment(commentId);
     if (!findComment) {
       throw new NotFoundException();
     }
+    if (userId !== findComment.commentatorInfo.userId) {
+      return {
+        flag: false,
+        status: 403,
+      };
+    }
+
     const deleteComment =
       await this.commentsRepository.deleteComment(commentId);
     if (!deleteComment) {
-      throw new NotFoundException();
+      return {
+        flag: false,
+        status: 404,
+      };
     }
-    return true;
+    return {
+      flag: true,
+      data: deleteComment,
+      status: 204,
+    };
   }
 
   async createLikeStatusComment(
