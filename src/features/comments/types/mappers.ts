@@ -17,6 +17,7 @@ export class CommentMappers {
           commentsViewModelWithStatus.push({
             id: comments[i]._id.toString(),
             content: comments[i].content,
+            createdAt: comments[i].createdAt,
             commentatorInfo: {
               userId: comments[i].commentatorInfo.userId,
               userLogin: comments[i].commentatorInfo.userLogin,
@@ -31,6 +32,7 @@ export class CommentMappers {
           commentsViewModelWithStatus.push({
             id: comments[i]._id.toString(),
             content: comments[i].content,
+            createdAt: comments[i].createdAt,
             commentatorInfo: {
               userId: comments[i].commentatorInfo.userId,
               userLogin: comments[i].commentatorInfo.userLogin,
@@ -50,7 +52,11 @@ export class CommentMappers {
         commentsViewModelWithoutStatus.push({
           id: comments[i]._id.toString(),
           content: comments[i].content,
-          commentatorInfo: comments[i].commentatorInfo,
+          createdAt: comments[i].createdAt,
+          commentatorInfo: {
+            userId: comments[i].commentatorInfo.userId,
+            userLogin: comments[i].commentatorInfo.userLogin,
+          },
           likesInfo: {
             likesCount: comments[i].likesInfo.likesCount,
             dislikesCount: comments[i].likesInfo.dislikesCount,
