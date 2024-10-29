@@ -24,9 +24,11 @@ export class AuthService {
     if (!auth) {
       return false;
     }
-    const accessToken = this.jwtService.createAccessJWT(auth._id.toString());
+    const accessToken = await this.jwtService.createAccessJWT(
+      auth._id.toString(),
+    );
     const deviceId = uuidv4();
-    const refreshToken = this.jwtService.createRefreshJWT(
+    const refreshToken = await this.jwtService.createRefreshJWT(
       auth._id.toString(),
       deviceId,
     );
