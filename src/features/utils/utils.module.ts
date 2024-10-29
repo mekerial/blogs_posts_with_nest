@@ -1,22 +1,32 @@
 import { Module } from '@nestjs/common';
 import { UtilsController } from './utils.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from '../users/schemas/user.schema';
-import { PostSchema } from '../posts/schemas/post.schema';
-import { BlogSchema } from '../blogs/schemas/blog.schema';
-import { CommentSchema } from '../comments/schemas/comment.schema';
-import { CommentLikeSchema } from '../likes/schemas/commentLikeSchema';
-import { PostLikeSchema } from '../likes/schemas/postLikeSchema';
+import { User, UserSchema } from '../users/schemas/user.schema';
+import { Post, PostSchema } from '../posts/schemas/post.schema';
+import { Blog, BlogSchema } from '../blogs/schemas/blog.schema';
+import { Comment, CommentSchema } from '../comments/schemas/comment.schema';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from '../likes/schemas/commentLikeSchema';
+import { PostLike, PostLikeSchema } from '../likes/schemas/postLikeSchema';
+import { Session, SessionSchema } from '../security/schemas/session.schema';
+import {
+  RefreshToken,
+  RefreshTokenSchema,
+} from '../../applications/jwt/resfreshToken.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'Blog', schema: BlogSchema },
-      { name: 'Post', schema: PostSchema },
-      { name: 'User', schema: UserSchema },
-      { name: 'Comment', schema: CommentSchema },
-      { name: 'CommentLike', schema: CommentLikeSchema },
-      { name: 'PostLike', schema: PostLikeSchema },
+      { name: Blog.name, schema: BlogSchema },
+      { name: Post.name, schema: PostSchema },
+      { name: User.name, schema: UserSchema },
+      { name: Comment.name, schema: CommentSchema },
+      { name: CommentLike.name, schema: CommentLikeSchema },
+      { name: PostLike.name, schema: PostLikeSchema },
+      { name: RefreshToken.name, schema: RefreshTokenSchema },
+      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [UtilsController],

@@ -3,7 +3,9 @@ import {
   Body,
   Controller,
   HttpCode,
+  NotFoundException,
   Post,
+  Req,
   Res,
   UnauthorizedException,
   UseFilters,
@@ -17,29 +19,41 @@ import {
   InputEmailModel,
   InputPasswordAndCode,
 } from '../users/types/user.types';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+import { SecurityService } from '../security/security.service';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('auth')
 export class AuthController {
-  constructor(protected authService: AuthService) {}
+  constructor(
+    protected authService: AuthService,
+    protected securityService: SecurityService,
+  ) {}
   @Post('login')
   @HttpCode(200)
   async userLogin(
     @Body() inputModel: LoginInputModel,
+    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const accessToken = await this.authService.loginUser(inputModel);
-    if (!accessToken) {
+    const deviceTitle = request.headers['user-agent'] || 'new device';
+    const ip = request.ip || 'no ip';
+
+    const auth = await this.authService.loginUser(inputModel, deviceTitle, ip);
+    if (!auth) {
       throw new UnauthorizedException();
     }
-    response.cookie('refreshToken', 'superPuper.Refresh.Token', {
+    response.cookie('refreshToken', auth.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
-
-    return { accessToken: accessToken };
+    response.cookie('deviceId', auth.deviceId, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    return { accessToken: auth.accessToken };
   }
   @Post('registration')
   @HttpCode(204)
@@ -95,6 +109,18 @@ export class AuthController {
     const setNewPassword = await this.authService.setNewPassword(inputData);
     if (!setNewPassword) {
       return BadRequestException;
+    }
+    return;
+  }
+
+  @Post('logout')
+  async logoutUser(@Req() request: Request) {
+    const refreshToken = request.cookies.refreashToken;
+
+    const logout =
+      await this.securityService.deleteSessionByRefreshToken(refreshToken);
+    if (!logout) {
+      return NotFoundException;
     }
     return;
   }

@@ -7,6 +7,8 @@ import { BlogDocument } from '../blogs/schemas/blog.schema';
 import { CommentDocument } from '../comments/schemas/comment.schema';
 import { CommentLikeDocument } from '../likes/schemas/commentLikeSchema';
 import { PostLikeDocument } from '../likes/schemas/postLikeSchema';
+import { SessionDocument } from '../security/schemas/session.schema';
+import { RefreshTokenDocument } from '../../applications/jwt/resfreshToken.schema';
 
 @Controller('testing')
 export class UtilsController {
@@ -18,6 +20,9 @@ export class UtilsController {
     @InjectModel('CommentLike')
     private commentLikeModel: Model<CommentLikeDocument>,
     @InjectModel('PostLike') private postLikeModel: Model<PostLikeDocument>,
+    @InjectModel('RefreshToken')
+    private refreshTokenModel: Model<RefreshTokenDocument>,
+    @InjectModel('Session') private sessionModel: Model<SessionDocument>,
   ) {}
   @Delete('all-data')
   @HttpCode(204)
@@ -28,6 +33,8 @@ export class UtilsController {
     await this.commentModel.deleteMany({});
     await this.commentLikeModel.deleteMany({});
     await this.postLikeModel.deleteMany({});
+    await this.refreshTokenModel.deleteMany({});
+    await this.sessionModel.deleteMany({});
 
     return;
   }

@@ -4,7 +4,7 @@ import { CommentsRepository } from './comments.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { CommentCreateModel } from './types/comment.types';
 import { UsersRepository } from '../users/users.repository';
-import { JwtService } from '../../applications/jwt.service';
+import { JwtService } from '../../applications/jwt/jwt.service';
 import { CommentMappers } from './types/mappers';
 import { CommentLikeRepository } from '../likes/commentLike.repository';
 

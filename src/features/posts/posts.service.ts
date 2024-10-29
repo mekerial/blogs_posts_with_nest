@@ -5,7 +5,7 @@ import { CreatePostModel, UpdatePostModel } from './types/post.types';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { PostMappers } from './types/mappers';
 import { PostLikeRepository } from '../likes/postLike.repository';
-import { JwtService } from '../../applications/jwt.service';
+import { JwtService } from '../../applications/jwt/jwt.service';
 
 @Injectable()
 export class PostsService {

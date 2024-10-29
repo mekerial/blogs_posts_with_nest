@@ -6,7 +6,7 @@ import { transformBlogToViewModel } from './types/mappers';
 import { PostsRepository } from '../posts/posts.repository';
 import { CreatePostModelByBlog } from '../posts/types/post.types';
 import { PostMappers } from '../posts/types/mappers';
-import { JwtService } from '../../applications/jwt.service';
+import { JwtService } from '../../applications/jwt/jwt.service';
 
 @Injectable()
 export class BlogsService {
