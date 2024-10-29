@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  NotFoundException,
   Post,
   Req,
   Res,
@@ -120,7 +119,7 @@ export class AuthController {
     const logout =
       await this.securityService.deleteSessionByRefreshToken(refreshToken);
     if (!logout) {
-      return NotFoundException;
+      throw new UnauthorizedException();
     }
     return;
   }
