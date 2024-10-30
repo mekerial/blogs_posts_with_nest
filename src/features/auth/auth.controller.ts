@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
   Req,
   Res,
   UnauthorizedException,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginInputModel } from './types/auth.types';
 import { AuthService } from './auth.service';
@@ -20,6 +22,8 @@ import {
 } from '../users/types/user.types';
 import { Response, Request } from 'express';
 import { SecurityService } from '../security/security.service';
+import { UsersService } from '../users/users.service';
+import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('auth')
@@ -27,6 +31,7 @@ export class AuthController {
   constructor(
     protected authService: AuthService,
     protected securityService: SecurityService,
+    protected userService: UsersService,
   ) {}
   @Post('login')
   @HttpCode(200)
@@ -54,6 +59,20 @@ export class AuthController {
     });
     return { accessToken: auth.accessToken };
   }
+
+  @Get('me')
+  @UseGuards(AuthGuard)
+  async getMePage(@Req() request: Request) {
+    const user = await this.userService.getUser(request.userId.toString());
+
+    const userInfo = {
+      email: user.accountData.email,
+      login: user.accountData.login,
+      userId: user._id,
+    };
+    return userInfo;
+  }
+
   @Post('registration')
   @HttpCode(204)
   async registrationUser(@Body() inputModel: CreateUserInputModelType) {
