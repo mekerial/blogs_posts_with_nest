@@ -162,7 +162,10 @@ export class AuthController {
     }
     const newAccessToken = updateTokens.accessToken;
     const newRefreshToken = updateTokens.refreshToken;
-    response.cookie('refreshToken', newRefreshToken);
+    response.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
 
     return { accessToken: newAccessToken };
   }
