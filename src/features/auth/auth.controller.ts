@@ -24,6 +24,7 @@ import { Response, Request } from 'express';
 import { SecurityService } from '../security/security.service';
 import { UsersService } from '../users/users.service';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
+import { JwtService } from '../../applications/jwt/jwt.service';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('auth')
@@ -32,6 +33,7 @@ export class AuthController {
     protected authService: AuthService,
     protected securityService: SecurityService,
     protected userService: UsersService,
+    protected jwtService: JwtService,
   ) {}
   @Post('login')
   @HttpCode(200)
@@ -141,5 +143,27 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     return;
+  }
+  @Post('refresh-token')
+  async getRefreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refrestToken = request.cookies.refreshToken;
+    const deviceId = request.cookies.deviceId;
+
+    const updateTokens = await this.jwtService.updateAccessTokenByRefreshToken(
+      refrestToken,
+      deviceId,
+    );
+
+    if (!updateTokens) {
+      throw new UnauthorizedException();
+    }
+    const newAccessToken = updateTokens.accessToken;
+    const newRefreshToken = updateTokens.refreshToken;
+    response.cookie('refreshToken', newRefreshToken);
+
+    return { accessToken: newAccessToken };
   }
 }
