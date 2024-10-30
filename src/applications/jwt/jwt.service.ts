@@ -85,11 +85,12 @@ export class JwtService {
     if (!result[0]) {
       return null;
     }
-    const userId = (
-      await this.getUserIdByRefreshToken(refreshToken)
-    ).toString();
+    const userId = await this.getUserIdByRefreshToken(refreshToken);
+    if (!userId) {
+      return null;
+    }
 
-    if (!userId || !(result[0].userId !== userId)) {
+    if (result[0].userId.toString() !== userId.toString()) {
       console.log('1 unsuccess update tokens!');
       return null;
     }
@@ -107,13 +108,14 @@ export class JwtService {
 
         const session =
           await this.sessionsRepository.getSessionByRefreshToken(refreshToken);
+
         console.log('updating session in jwt');
         await this.sessionsRepository.updateSession(
           session.ip,
           session.issuedAt,
           session.deviceId,
           session.deviceName,
-          session.userId,
+          session.userId.toString(),
           refreshToken,
           newRefreshToken,
         );
@@ -121,7 +123,7 @@ export class JwtService {
         console.log('success update tokens!');
 
         return {
-          userId: verifyToken.userId,
+          userId: verifyToken.userId.toString(),
           accessToken: newAccessToken,
           refreshToken: newRefreshToken,
         };

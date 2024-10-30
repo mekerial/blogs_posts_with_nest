@@ -8,12 +8,14 @@ import {
   InputEmailModel,
   InputPasswordAndCode,
 } from '../users/types/user.types';
+import { SecurityService } from '../security/security.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     protected usersService: UsersService,
     protected jwtService: JwtService,
+    protected securityService: SecurityService,
   ) {}
   async loginUser(
     loginInputData: LoginInputModel,
@@ -32,6 +34,16 @@ export class AuthService {
       auth._id.toString(),
       deviceId,
     );
+    const userId = auth._id.toString();
+
+    await this.securityService.createSession(
+      ip,
+      deviceTitle,
+      deviceId,
+      userId,
+      refreshToken,
+    );
+
     return {
       refreshToken: refreshToken,
       deviceId: deviceId,
