@@ -116,9 +116,13 @@ export class SessionsRepository {
   }
 
   async deleteSessionByRefreshToken(refreshToken: string) {
+    const session = await this.getSessionByRefreshToken(refreshToken);
+    console.log('OMG');
+
     const result = await this.sessionModel.deleteOne({
       refreshToken: refreshToken,
     });
+
     return result.deletedCount!!;
   }
 }

@@ -141,12 +141,16 @@ export class JwtService {
     const result = await this.refreshTokenModel
       .find({ refreshToken: refreshToken })
       .lean();
+
     if (!result[0]) {
       return null;
     }
 
     const userId = await this.getUserIdByRefreshToken(refreshToken);
-    if (!userId || !(result[0].userId !== userId)) {
+    if (!userId) {
+      return null;
+    }
+    if (result[0].userId.toString() !== userId.toString()) {
       return null;
     }
 
@@ -166,6 +170,7 @@ export class JwtService {
         return null;
       }
     } else {
+      console.log('else');
       return null;
     }
   }
