@@ -85,8 +85,10 @@ export class JwtService {
     if (!result[0]) {
       return null;
     }
+    const userId = (
+      await this.getUserIdByRefreshToken(refreshToken)
+    ).toString();
 
-    const userId = await this.getUserIdByRefreshToken(refreshToken);
     if (!userId || !(result[0].userId !== userId)) {
       console.log('1 unsuccess update tokens!');
       return null;

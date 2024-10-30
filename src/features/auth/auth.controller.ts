@@ -149,11 +149,10 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const refrestToken = request.cookies.refreshToken;
+    const refreshToken = request.cookies.refreshToken;
     const deviceId = request.cookies.deviceId;
-
     const updateTokens = await this.jwtService.updateAccessTokenByRefreshToken(
-      refrestToken,
+      refreshToken,
       deviceId,
     );
 
