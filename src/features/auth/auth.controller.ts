@@ -136,7 +136,11 @@ export class AuthController {
   @Post('logout')
   async logoutUser(@Req() request: Request) {
     const refreshToken = request.cookies.refreashToken;
-
+    const revokeRefreshToken =
+      await this.jwtService.revokeRefreshToken(refreshToken);
+    if (!revokeRefreshToken) {
+      throw new UnauthorizedException();
+    }
     const logout =
       await this.securityService.deleteSessionByRefreshToken(refreshToken);
     if (!logout) {
