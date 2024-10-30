@@ -132,7 +132,7 @@ export class AuthController {
     }
     return;
   }
-
+  @UseGuards(AuthGuard)
   @Post('logout')
   async logoutUser(@Req() request: Request) {
     const refreshToken = request.cookies.refreashToken;
@@ -145,6 +145,7 @@ export class AuthController {
     return;
   }
   @Post('refresh-token')
+  @HttpCode(200)
   async getRefreshToken(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
