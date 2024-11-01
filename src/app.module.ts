@@ -9,6 +9,7 @@ import { UtilsModule } from './features/utils/utils.module';
 import { PostsModule } from './features/posts/posts.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CommentsModule } from './features/comments/comments.module';
+import { SecurityModule } from './features/security/security.module';
 dotenv.config();
 
 const mongo_uri = process.env.MONGO_URI; // || 'mongodb://localhost:27017';
@@ -25,6 +26,7 @@ if (!mongo_uri) {
     UtilsModule,
     AuthModule,
     CommentsModule,
+    SecurityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

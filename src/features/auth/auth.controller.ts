@@ -133,6 +133,7 @@ export class AuthController {
     return;
   }
 
+  @HttpCode(204)
   @Post('logout')
   async logoutUser(@Req() request: Request) {
     const refreshToken = request.cookies.refreshToken;
