@@ -15,6 +15,7 @@ import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { Request, Response } from 'express';
 import { JwtService } from '../../applications/jwt/jwt.service';
 import { SessionsRepository } from './sessions.repository';
+import { SecurityService } from './security.service';
 
 @UseFilters(HttpExceptionFilter)
 @UseGuards(AuthGuard)
@@ -23,19 +24,20 @@ export class SecurityController {
   constructor(
     protected jwtService: JwtService,
     protected sessionRepository: SessionsRepository,
+    protected securityService: SecurityService,
   ) {}
   @Get('devices')
   async getActiveSessions(@Req() request: Request) {
     const refreshToken = request.cookies.refreshToken;
-    const userId = await this.jwtService.getUserIdByRefreshToken(refreshToken);
 
-    if (!userId) {
+    const activeSessionViewModel =
+      await this.securityService.getActiveSessionsViewModel(refreshToken);
+
+    if (!activeSessionViewModel) {
       throw new UnauthorizedException();
     }
 
-    const activeSessions =
-      await this.sessionRepository.getSessionsByUserId(userId);
-    return activeSessions;
+    return activeSessionViewModel;
   }
 
   @Delete('devices')

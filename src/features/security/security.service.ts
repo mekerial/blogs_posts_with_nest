@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SessionsRepository } from './sessions.repository';
 import { JwtService } from '../../applications/jwt/jwt.service';
+import { sessionMapper } from './types/mappers';
 
 @Injectable()
 export class SecurityService {
@@ -59,5 +60,17 @@ export class SecurityService {
     return await this.sessionRepository.deleteSessionByRefreshToken(
       refreshToken,
     );
+  }
+
+  async getActiveSessionsViewModel(refreshToken: string) {
+    const userId = await this.jwtService.getUserIdByRefreshToken(refreshToken);
+
+    if (!userId) {
+      return null;
+    }
+    const activeSessions =
+      await this.sessionRepository.getSessionsByUserId(userId);
+    const sessionsViewModel = sessionMapper(activeSessions);
+    return sessionsViewModel;
   }
 }
