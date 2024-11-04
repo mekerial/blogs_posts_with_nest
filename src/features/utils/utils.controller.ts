@@ -27,6 +27,7 @@ export class UtilsController {
   @Delete('all-data')
   @HttpCode(204)
   async dropDatabase() {
+    console.log('drop database');
     await this.blogModel.deleteMany({});
     await this.postModel.deleteMany({});
     await this.userModel.deleteMany({});

@@ -25,17 +25,22 @@ export class UsersController {
   constructor(protected usersService: UsersService) {}
   @Get()
   async getUsers(@Query() sortData: QueryUserInputModel) {
+    console.log('GET users/');
     return this.usersService.findUsers(sortData);
   }
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
+    console.log('GET users/:id');
+
     const userId = id;
     return this.usersService.getUser(userId);
   }
 
   @Post()
   async createUser(@Body() inputModel: CreateUserInputModelType) {
+    console.log('POST users');
+
     if (!inputModel.login || !inputModel.password || !inputModel.email) {
       throw new UnauthorizedException();
     }
@@ -49,6 +54,8 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(204)
   async deleteUser(@Param('id') userId: string) {
+    console.log('DELETE users/:id');
+
     const deleteUser = await this.usersService.deleteUser(userId);
     if (!deleteUser) {
       throw new NotFoundException(`User with id: ${userId} not found`);

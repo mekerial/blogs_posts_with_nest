@@ -2,23 +2,21 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Req,
   Res,
   UnauthorizedException,
   UseFilters,
-  UseGuards,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
-import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { Request, Response } from 'express';
 import { JwtService } from '../../applications/jwt/jwt.service';
 import { SessionsRepository } from './sessions.repository';
 import { SecurityService } from './security.service';
 
 @UseFilters(HttpExceptionFilter)
-@UseGuards(AuthGuard)
 @Controller('security')
 export class SecurityController {
   constructor(
@@ -28,7 +26,14 @@ export class SecurityController {
   ) {}
   @Get('devices')
   async getActiveSessions(@Req() request: Request) {
+    console.log('GET security/devices');
+
     const refreshToken = request.cookies.refreshToken;
+
+    const userId = await this.jwtService.getUserIdByRefreshToken(refreshToken);
+    if (!userId) {
+      throw new UnauthorizedException();
+    }
 
     const activeSessionViewModel =
       await this.securityService.getActiveSessionsViewModel(refreshToken);
@@ -40,8 +45,11 @@ export class SecurityController {
     return activeSessionViewModel;
   }
 
+  @HttpCode(204)
   @Delete('devices')
   async deleteSessions(@Req() request: Request) {
+    console.log('DELETE security/devices');
+
     const refreshToken = request.cookies.refreshToken;
     const userId = await this.jwtService.getUserIdByRefreshToken(refreshToken);
 
@@ -51,12 +59,16 @@ export class SecurityController {
     await this.sessionRepository.deleteSessions(userId, refreshToken);
     return;
   }
+
+  @HttpCode(204)
   @Delete('devices/:id')
   async deleteOneSession(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
     @Param('id') deviceId: string,
   ) {
+    console.log('DELETE security/devices/:id');
+
     const deviceInDB =
       await this.sessionRepository.getSessionByDeviceId(deviceId);
 
@@ -73,6 +85,7 @@ export class SecurityController {
 
     if (userId !== deviceInDB.userId) {
       response.sendStatus(403);
+      return;
     }
     const sessionIsDel = await this.sessionRepository.deleteSession(
       userId,
