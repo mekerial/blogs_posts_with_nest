@@ -16,11 +16,13 @@ import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { CommentCreateModel } from './types/comment.types';
 import { Request, Response } from 'express';
 import { LikeStatusDto } from '../posts/types/post.types';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  @SkipThrottle()
   @Get('/:id')
   async getComment(@Param('id') commentId: string, @Req() request: Request) {
     let accessToken;
@@ -38,6 +40,7 @@ export class CommentsController {
     return findComment;
   }
 
+  @SkipThrottle()
   @Put('/:id')
   @UseGuards(AuthGuard)
   @HttpCode(204)
@@ -62,6 +65,7 @@ export class CommentsController {
     return;
   }
 
+  @SkipThrottle()
   @Delete('/:id')
   @HttpCode(204)
   @UseGuards(AuthGuard)
@@ -84,6 +88,7 @@ export class CommentsController {
     return deleteComment;
   }
 
+  @SkipThrottle()
   @Put('/:id/like-status')
   @UseGuards(AuthGuard)
   @HttpCode(204)

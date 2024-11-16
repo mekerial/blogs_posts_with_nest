@@ -17,18 +17,21 @@ import { QueryUserInputModel } from '../../common/types';
 import { CreateUserInputModelType } from './types/user.types';
 import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
 import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @UseFilters(HttpExceptionFilter)
 @UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(protected usersService: UsersService) {}
+  @SkipThrottle()
   @Get()
   async getUsers(@Query() sortData: QueryUserInputModel) {
     console.log('GET users/');
     return this.usersService.findUsers(sortData);
   }
 
+  @SkipThrottle()
   @Get(':id')
   async getUser(@Param('id') id: string) {
     console.log('GET users/:id');
@@ -37,6 +40,7 @@ export class UsersController {
     return this.usersService.getUser(userId);
   }
 
+  @SkipThrottle()
   @Post()
   async createUser(@Body() inputModel: CreateUserInputModelType) {
     console.log('POST users');
@@ -51,6 +55,7 @@ export class UsersController {
     return createUser;
   }
 
+  @SkipThrottle()
   @Delete(':id')
   @HttpCode(204)
   async deleteUser(@Param('id') userId: string) {

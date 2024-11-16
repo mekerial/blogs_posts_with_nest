@@ -15,6 +15,7 @@ import { Request, Response } from 'express';
 import { JwtService } from '../../applications/jwt/jwt.service';
 import { SessionsRepository } from './sessions.repository';
 import { SecurityService } from './security.service';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('security')
@@ -24,6 +25,7 @@ export class SecurityController {
     protected sessionRepository: SessionsRepository,
     protected securityService: SecurityService,
   ) {}
+  @SkipThrottle()
   @Get('devices')
   async getActiveSessions(@Req() request: Request) {
     console.log('GET security/devices');
@@ -45,6 +47,7 @@ export class SecurityController {
     return activeSessionViewModel;
   }
 
+  @SkipThrottle()
   @HttpCode(204)
   @Delete('devices')
   async deleteSessions(@Req() request: Request) {
@@ -60,6 +63,7 @@ export class SecurityController {
     return;
   }
 
+  @SkipThrottle()
   @HttpCode(204)
   @Delete('devices/:id')
   async deleteOneSession(

@@ -25,6 +25,7 @@ import { SecurityService } from '../security/security.service';
 import { UsersService } from '../users/users.service';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { JwtService } from '../../applications/jwt/jwt.service';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('auth')
@@ -35,6 +36,7 @@ export class AuthController {
     protected userService: UsersService,
     protected jwtService: JwtService,
   ) {}
+
   @Post('login')
   @HttpCode(200)
   async userLogin(
@@ -61,7 +63,7 @@ export class AuthController {
     });
     return { accessToken: auth.accessToken };
   }
-
+  @SkipThrottle()
   @Get('me')
   @UseGuards(AuthGuard)
   async getMePage(@Req() request: Request) {
@@ -84,6 +86,7 @@ export class AuthController {
     }
     return;
   }
+
   @Post('registration-email-resending')
   @HttpCode(204)
   async regEmailResend(@Body() inputModel: InputEmailModel) {
@@ -124,6 +127,7 @@ export class AuthController {
     }
     return;
   }
+
   @Post('new-password')
   async setNewPassword(@Body() inputData: InputPasswordAndCode) {
     const setNewPassword = await this.authService.setNewPassword(inputData);
@@ -132,7 +136,7 @@ export class AuthController {
     }
     return;
   }
-
+  @SkipThrottle()
   @HttpCode(204)
   @Post('logout')
   async logoutUser(@Req() request: Request) {
@@ -152,6 +156,7 @@ export class AuthController {
     }
     return;
   }
+  @SkipThrottle()
   @Post('refresh-token')
   @HttpCode(200)
   async getRefreshToken(
