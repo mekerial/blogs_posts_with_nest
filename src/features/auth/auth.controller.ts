@@ -25,7 +25,7 @@ import { SecurityService } from '../security/security.service';
 import { UsersService } from '../users/users.service';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { JwtService } from '../../applications/jwt/jwt.service';
-import { SkipThrottle } from '@nestjs/throttler';
+import { SkipThrottle, ThrottlerGuard } from '@nestjs/throttler';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('auth')
@@ -77,6 +77,7 @@ export class AuthController {
     return userInfo;
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('registration')
   @HttpCode(204)
   async registrationUser(@Body() inputModel: CreateUserInputModelType) {
@@ -87,6 +88,7 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('registration-email-resending')
   @HttpCode(204)
   async regEmailResend(@Body() inputModel: InputEmailModel) {
@@ -102,6 +104,7 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('registration-confirmation')
   @HttpCode(204)
   async confirmEmail(@Body() inputModel: InputConfirmationCodeModel) {
@@ -118,6 +121,7 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('password-recovery')
   async passwordRecovery(@Body() inputEmail: InputEmailModel) {
     const passwordRecovery =

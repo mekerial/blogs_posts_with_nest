@@ -32,7 +32,7 @@ import { APP_GUARD } from '@nestjs/core';
     ]),
     ThrottlerModule.forRoot([
       {
-        name: 'rate limit',
+        name: 'rate-limit',
         ttl: 10000,
         limit: 5,
       },
@@ -48,10 +48,10 @@ import { APP_GUARD } from '@nestjs/core';
     SessionsRepository,
     SecurityService,
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ThrottlerGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AuthModule {}
