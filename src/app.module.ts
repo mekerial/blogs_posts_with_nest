@@ -10,8 +10,7 @@ import { PostsModule } from './features/posts/posts.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CommentsModule } from './features/comments/comments.module';
 import { SecurityModule } from './features/security/security.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 dotenv.config();
 
@@ -41,10 +40,10 @@ if (!mongo_uri) {
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
 export class AppModule {}

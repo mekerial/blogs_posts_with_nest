@@ -6,7 +6,7 @@ import { UsersService } from '../users/users.service';
 import { PasswordService } from '../../applications/password.service';
 import { UsersRepository } from '../users/users.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from '../users/schemas/user.schema';
+import { User, UserSchema } from '../users/schemas/user.schema';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
@@ -21,8 +21,8 @@ import { SecurityService } from '../security/security.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
       { name: PasswordRecovery.name, schema: PasswordRecoverySchema },
       { name: RefreshToken.name, schema: RefreshTokenSchema },
       { name: Session.name, schema: SessionSchema },
