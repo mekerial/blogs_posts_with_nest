@@ -136,7 +136,7 @@ export class AuthController {
     }
     return;
   }
-  @SkipThrottle()
+
   @HttpCode(204)
   @Post('logout')
   async logoutUser(@Req() request: Request) {
@@ -156,7 +156,7 @@ export class AuthController {
     }
     return;
   }
-  @SkipThrottle()
+
   @Post('refresh-token')
   @HttpCode(200)
   async getRefreshToken(

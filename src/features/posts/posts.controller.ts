@@ -29,7 +29,6 @@ import { CommentCreateModel } from '../comments/types/comment.types';
 import { AuthGuard } from '../../infrastructure/guards/auth.guard';
 import { Request } from 'express';
 import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';
-import { SkipThrottle } from '@nestjs/throttler';
 
 @UseFilters(HttpExceptionFilter)
 @Controller('posts')
@@ -38,7 +37,7 @@ export class PostsController {
     protected postsService: PostsService,
     protected commentsService: CommentsService,
   ) {}
-  @SkipThrottle()
+
   @Get()
   async getAllPosts(
     @Query() sortData: QueryPostInputModel,
@@ -52,7 +51,7 @@ export class PostsController {
     }
     return await this.postsService.getAllPosts(sortData, accessToken);
   }
-  @SkipThrottle()
+
   @Get(':id')
   async getPost(@Param('id') postId: string, @Req() request: Request) {
     console.log('GET /posts/:id');
@@ -68,7 +67,6 @@ export class PostsController {
     return post;
   }
 
-  @SkipThrottle()
   @UseGuards(BasicAuthGuard)
   @Post()
   async createPost(@Body() inputModel: CreatePostModel) {
@@ -83,7 +81,6 @@ export class PostsController {
     return createPost;
   }
 
-  @SkipThrottle()
   @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(204)
@@ -100,7 +97,6 @@ export class PostsController {
     return updatePost;
   }
 
-  @SkipThrottle()
   @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(204)
@@ -114,7 +110,6 @@ export class PostsController {
     return deletePost;
   }
 
-  @SkipThrottle()
   @Get(':id/comments')
   async getAllComments(
     @Query() sortData: QueryCommentInputModel,
@@ -139,7 +134,6 @@ export class PostsController {
     return findComments;
   }
 
-  @SkipThrottle()
   @Post(':id/comments')
   @UseGuards(AuthGuard)
   async createComment(
@@ -160,7 +154,6 @@ export class PostsController {
     return createComment;
   }
 
-  @SkipThrottle()
   @Put(':id/like-status')
   @UseGuards(AuthGuard)
   @HttpCode(204)

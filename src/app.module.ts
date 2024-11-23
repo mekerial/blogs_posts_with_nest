@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as dotenv from 'dotenv';
 import { UsersModule } from './features/users/users.module';
@@ -10,8 +9,6 @@ import { PostsModule } from './features/posts/posts.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CommentsModule } from './features/comments/comments.module';
 import { SecurityModule } from './features/security/security.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 
 dotenv.config();
 
@@ -23,13 +20,6 @@ if (!mongo_uri) {
 @Module({
   imports: [
     MongooseModule.forRoot(mongo_uri),
-    ThrottlerModule.forRoot([
-      {
-        name: 'rate limit',
-        ttl: 10000,
-        limit: 5,
-      },
-    ]),
     UsersModule,
     BlogsModule,
     PostsModule,
@@ -39,12 +29,6 @@ if (!mongo_uri) {
     SecurityModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}

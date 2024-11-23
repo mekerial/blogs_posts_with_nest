@@ -18,6 +18,9 @@ import {
 import { Session, SessionSchema } from '../security/schemas/session.schema';
 import { SessionsRepository } from '../security/sessions.repository';
 import { SecurityService } from '../security/security.service';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AppService } from '../../app.service';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -26,6 +29,13 @@ import { SecurityService } from '../security/security.service';
       { name: PasswordRecovery.name, schema: PasswordRecoverySchema },
       { name: RefreshToken.name, schema: RefreshTokenSchema },
       { name: Session.name, schema: SessionSchema },
+    ]),
+    ThrottlerModule.forRoot([
+      {
+        name: 'rate limit',
+        ttl: 10000,
+        limit: 5,
+      },
     ]),
   ],
   controllers: [AuthController],
@@ -37,6 +47,11 @@ import { SecurityService } from '../security/security.service';
     UsersRepository,
     SessionsRepository,
     SecurityService,
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
   ],
 })
 export class AuthModule {}

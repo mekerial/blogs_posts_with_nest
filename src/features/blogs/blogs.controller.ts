@@ -26,13 +26,12 @@ import { SkipThrottle } from '@nestjs/throttler';
 @Controller('blogs')
 export class BlogsController {
   constructor(protected blogsService: BlogsService) {}
-  @SkipThrottle()
+
   @Get()
   async getAllBlogs(@Query() sortData: QueryBlogInputModel) {
     return this.blogsService.getAllBlogs(sortData);
   }
 
-  @SkipThrottle()
   @Get(':id')
   async getBlog(@Param('id') id: string) {
     const blog = await this.blogsService.getBlog(id);
@@ -41,7 +40,7 @@ export class BlogsController {
     }
     return blog;
   }
-  @SkipThrottle()
+
   @UseGuards(BasicAuthGuard)
   @Post()
   async createBlog(@Body() inputModel: CreateBlogModel) {
@@ -49,7 +48,6 @@ export class BlogsController {
     return createBlog;
   }
 
-  @SkipThrottle()
   @UseGuards(BasicAuthGuard)
   @Put(':id')
   @HttpCode(204)
@@ -63,7 +61,7 @@ export class BlogsController {
     }
     return updateBlog;
   }
-  @SkipThrottle()
+
   @UseGuards(BasicAuthGuard)
   @Delete(':id')
   @HttpCode(204)
@@ -75,7 +73,6 @@ export class BlogsController {
     return;
   }
 
-  @SkipThrottle()
   @Get(':id/posts')
   async getAllPostsByBlog(
     @Param('id') blogId: string,
