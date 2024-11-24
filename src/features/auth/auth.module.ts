@@ -18,9 +18,8 @@ import {
 import { Session, SessionSchema } from '../security/schemas/session.schema';
 import { SessionsRepository } from '../security/sessions.repository';
 import { SecurityService } from '../security/security.service';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppService } from '../../app.service';
-import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -48,10 +47,6 @@ import { APP_GUARD } from '@nestjs/core';
     SessionsRepository,
     SecurityService,
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
   ],
 })
 export class AuthModule {}

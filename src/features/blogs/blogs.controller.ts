@@ -22,6 +22,7 @@ import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';
 import { Request } from 'express';
 import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @UseFilters(HttpExceptionFilter)
 @Controller('blogs')
 export class BlogsController {
