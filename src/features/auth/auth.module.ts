@@ -32,7 +32,7 @@ import { AppService } from '../../app.service';
     ]),
     ThrottlerModule.forRoot([
       {
-        name: 'rate-limit',
+        name: 'rate-limiter',
         ttl: 10000,
         limit: 5,
       },
