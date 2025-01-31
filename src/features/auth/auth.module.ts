@@ -7,6 +7,8 @@ import { PasswordService } from '../../applications/password.service';
 import { UsersRepository } from '../users/users.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../users/schemas/user.schema';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
@@ -19,7 +21,6 @@ import { Session, SessionSchema } from '../security/schemas/session.schema';
 import { SessionsRepository } from '../security/sessions.repository';
 import { SecurityService } from '../security/security.service';
 import { AppService } from '../../app.service';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -47,6 +48,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
     SessionsRepository,
     SecurityService,
     AppService,
+    {
+      provide: 'THROTTLER_GUARD',
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AuthModule {}
