@@ -15,7 +15,7 @@ export class JwtService {
 
   async createAccessJWT(userId: string) {
     const accessToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
-      expiresIn: '20s',
+      expiresIn: '10s',
     });
     return accessToken;
   }
