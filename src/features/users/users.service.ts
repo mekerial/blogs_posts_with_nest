@@ -79,7 +79,7 @@ export class UsersService {
     if (!user) {
       return false;
     }
-    await emailAdapter.sendConfirmToEmail(userData.email, confirmationCode);
+    emailAdapter.sendConfirmToEmail(userData.email, confirmationCode);
 
     return true;
   }
