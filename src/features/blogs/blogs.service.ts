@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { QueryBlogInputModel, QueryPostInputModel } from '../../common/types';
+import {
+  QueryBlogInputModel,
+  QueryPostInputModel,
+} from '../../common/queryInputTypes';
 import { CreateBlogModel } from './types/blog.types';
 import { BlogsRepository } from './blogs.repository';
 import { transformBlogToViewModel } from './types/mappers';

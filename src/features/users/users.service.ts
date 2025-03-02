@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { QueryUserInputModel } from '../../common/types';
+import { QueryUserInputModel } from '../../common/queryInputTypes';
 import { PasswordService } from '../../applications/password.service';
 import {
   CreateUserInputModelType,

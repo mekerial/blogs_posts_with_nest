@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QueryCommentInputModel } from '../../common/types';
+import { QueryCommentInputModel } from '../../common/queryInputTypes';
 import { CommentsRepository } from './comments.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { CommentCreateModel } from './types/comment.types';

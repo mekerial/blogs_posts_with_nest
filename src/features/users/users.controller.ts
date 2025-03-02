@@ -13,7 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { QueryUserInputModel } from '../../common/types';
+import { QueryUserInputModel } from '../../common/queryInputTypes';
 import { CreateUserInputModelType } from './types/user.types';
 import { HttpExceptionFilter } from '../../infrastructure/exception-filters/http-exception-filter';
 import { BasicAuthGuard } from '../../infrastructure/guards/basic-auth.guard';

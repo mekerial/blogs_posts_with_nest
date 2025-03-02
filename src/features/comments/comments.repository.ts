@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import mongoose, { Model, SortOrder } from 'mongoose';
-import { QueryCommentInputModel } from '../../common/types';
+import { QueryCommentInputModel } from '../../common/queryInputTypes';
 import { CommentDbModel, UpdateCommentModel } from './types/comment.types';
 import { ObjectId } from 'mongodb';
 

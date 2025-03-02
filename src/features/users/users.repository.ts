@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, SortOrder } from 'mongoose';
-import { QueryUserInputModel } from '../../common/types';
+import { QueryUserInputModel } from '../../common/queryInputTypes';
 import { UserDbModel } from './types/user.types';
 import { transformUserToViewModel } from './types/mappers';
 import { UserDocument } from './schemas/user.schema';

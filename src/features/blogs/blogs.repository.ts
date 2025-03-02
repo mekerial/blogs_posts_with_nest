@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from './schemas/blog.schema';
 import mongoose, { Model, SortOrder } from 'mongoose';
-import { QueryBlogInputModel } from '../../common/types';
+import { QueryBlogInputModel } from '../../common/queryInputTypes';
 import { transformBlogToViewModel } from './types/mappers';
 import { CreateBlogModel } from './types/blog.types';
 

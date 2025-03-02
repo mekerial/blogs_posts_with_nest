@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, SortOrder } from 'mongoose';
 import { PostDbModel, UpdatePostModel } from './types/post.types';
 import { Post, PostDocument } from './schemas/post.schema';
-import { QueryPostInputModel } from '../../common/types';
+import { QueryPostInputModel } from '../../common/queryInputTypes';
 
 @Injectable()
 export class PostsRepository {

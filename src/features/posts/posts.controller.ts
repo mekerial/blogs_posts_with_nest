@@ -17,7 +17,7 @@ import { PostsService } from './posts.service';
 import {
   QueryCommentInputModel,
   QueryPostInputModel,
-} from '../../common/types';
+} from '../../common/queryInputTypes';
 import {
   CreatePostModel,
   LikeStatusDto,
